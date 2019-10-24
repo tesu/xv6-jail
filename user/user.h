@@ -23,6 +23,7 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int jailcfg(int, uint64, uint64, uint64);
 
 // ulib.c
 int stat(const char*, struct stat*);

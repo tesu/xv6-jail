@@ -155,6 +155,9 @@ consoleintr(int c)
       consputc(BACKSPACE);
     }
     break;
+  case C('J'): // print the list of jails
+    lsjails();
+    break;
   case C('H'): // Backspace
   case '\x7f':
     if(cons.e != cons.w){

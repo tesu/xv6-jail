@@ -481,3 +481,14 @@ sys_pipe(void)
   }
   return 0;
 }
+
+uint64
+sys_jailcfg(void)
+{
+  uint64 ml, dl, il;
+  int id;
+
+  if(argint(0, &id) < 0 || argaddr(1, &ml) < 0 || argaddr(2, &dl) < 0 || argaddr(3, &il) < 0)
+    return -1;
+  return jailcfg(id, ml, dl, il);
+}
