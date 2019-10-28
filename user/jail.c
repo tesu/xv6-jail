@@ -2,6 +2,9 @@
 #include "kernel/stat.h"
 #include "user/user.h"
 
+#define DEFAULT_MLIMIT 64000
+#define DEFAULT_DLIMIT 64000
+#define DEFAULT_ILIMIT 100
 
 // the jail configuration program
 void
@@ -17,7 +20,9 @@ main(int argc, char *argv[])
     fprintf(2, "Usage: jail jid [memlimit(MB)] [disklimit(MB)] [inodelimit]...\n");
     exit(0);
   }
-  // parse the arguments here
-  jail(atoi(argv[1]), 10, 10, 20);
+  uint64 memlimit   = (argc < 3) ? DEFAULT_MLIMIT : argv[2];
+  uint64 disklimit  = (argc < 4) ? DEFAULT_DLIMIT : argv[3];
+  uint64 inodelimit = (argc < 5) ? DEFAULT_ILIMIT : argv[4];
+  jail(atoi(argv[1]), memlimit, disklimit, inodelimit);
   exit(0);
 }
