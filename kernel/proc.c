@@ -38,6 +38,7 @@ procinit(void)
       uint64 va = KSTACK((int) (p - proc));
       kvmmap(va, (uint64)pa, PGSIZE, PTE_R | PTE_W);
       p->kstack = va;
+      p->jid = -1;
   }
   kvminithart();
 }
