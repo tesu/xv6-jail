@@ -103,5 +103,5 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  struct jail *jail; 
+  int jid;                     // Jail ID (-1 if not running in jail)
 };

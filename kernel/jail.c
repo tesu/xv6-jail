@@ -33,3 +33,10 @@ lsjails(void)
     i++;
   }
 }
+
+void
+setjid(int jid)
+{
+  struct proc *p = myproc();
+  p->jid = jid;
+}

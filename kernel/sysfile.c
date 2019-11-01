@@ -492,3 +492,12 @@ sys_jailcfg(void)
     return -1;
   return jailcfg(id, ml, dl, il);
 }
+
+uint64
+sys_setjid(void)
+{
+  int jid;
+  if(argint(0, &jid) < 0) return -1;
+  setjid(jid);
+  return 0;
+}
