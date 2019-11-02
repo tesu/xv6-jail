@@ -280,7 +280,7 @@ fork(void)
   pid = np->pid;
 
   np->state = RUNNABLE;
-
+  np->jid = p->jid; 
   release(&np->lock);
 
   return pid;
