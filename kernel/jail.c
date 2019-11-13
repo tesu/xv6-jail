@@ -28,9 +28,9 @@ lsjails(void)
 {
   struct jail *j;
   int i = 0;
-  for(j = jail; j < &jail[NJAIL]; j++){
-    printf("jail %d: %p %p %p\n", i, j->memlim, j->disklim, j->inodelim);
-    i++;
+  printf("\nlsjails:\n");
+  for(j = jail; j < &jail[NJAIL]; j++, i++){
+    printf("jail %d:\nmemory\t: %p/%p\ndisk\t: %p/%p\ninodes\t: %p/%p\n", i, j->memusage, j->memlim, j->diskusage, j->disklim, j->inodeusage, j->inodelim);
   }
 }
 
