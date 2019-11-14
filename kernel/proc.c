@@ -629,10 +629,16 @@ int
 kill(int pid)
 {
   struct proc *p;
+  struct jail *jail = myproc()->jail;
 
   for(p = proc; p < &proc[NPROC]; p++){
     acquire(&p->lock);
     if(p->pid == pid){
+      if(jail && p->jail != jail){
+        // Current process running in jail, not allowed to kill process outside of jail
+        release(&p->lock);
+        return -1;
+      }
       p->killed = 1;
       if(p->state == SLEEPING){
         // Wake process from sleep().
