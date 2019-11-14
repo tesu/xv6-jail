@@ -273,6 +273,18 @@ fork(void)
     return -1;
   }
 
+  // Check if jail has enough memory
+  if(p->jail){
+    acquire(&p->jail->lock);
+    p->jail->memusage += p->sz;
+    if(p->jail->memusage > p->jail->memlim){
+      p->jail->memusage -= p->sz;
+      release(&p->jail->lock);
+      return -1;
+    }
+    release(&p->jail->lock);
+  }
+
   // Copy user memory from parent to child.
   if(uvmcopy(p->pagetable, np->pagetable, p->sz) < 0){
     freeproc(np);
