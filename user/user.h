@@ -24,7 +24,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int jailcfg(int, uint64, uint64, uint64);
-int setjid(int);
+int setjail(int);
 
 // ulib.c
 int stat(const char*, struct stat*);

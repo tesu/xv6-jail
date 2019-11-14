@@ -35,8 +35,9 @@ lsjails(void)
 }
 
 void
-setjid(int jid)
+setjail(int jid)
 {
   struct proc *p = myproc();
-  p->jid = jid;
+  p->jail = jail+jid;
 }
+

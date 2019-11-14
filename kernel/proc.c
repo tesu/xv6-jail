@@ -5,6 +5,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
+#include "jail.h"
 
 struct cpu cpus[NCPU];
 
@@ -38,7 +39,7 @@ procinit(void)
       uint64 va = KSTACK((int) (p - proc));
       kvmmap(va, (uint64)pa, PGSIZE, PTE_R | PTE_W);
       p->kstack = va;
-      p->jid = -1;
+      p->jail = 0;
   }
   kvminithart();
 }
@@ -227,15 +228,34 @@ growproc(int n)
   uint sz;
   struct proc *p = myproc();
 
+  if(p->jail) {
+    acquire(&p->jail->lock);
+    if (p->jail->memusage + n > p->jail->memlim) {
+      release(&p->jail->lock);
+      return -1;
+    }
+    p->jail->memusage -= p->sz; // we add new value of p->sz before returning
+  }
+
   sz = p->sz;
   if(n > 0){
     if((sz = uvmalloc(p->pagetable, sz, sz + n)) == 0) {
+      if(p->jail) {
+        p->jail->memusage += p->sz;
+        release(&p->jail->lock);
+      }
+
       return -1;
     }
   } else if(n < 0){
     sz = uvmdealloc(p->pagetable, sz, sz + n);
   }
   p->sz = sz;
+
+  if(p->jail) {
+    p->jail->memusage += p->sz;
+    release(&p->jail->lock);
+  }
   return 0;
 }
 
@@ -280,7 +300,7 @@ fork(void)
   pid = np->pid;
 
   np->state = RUNNABLE;
-  np->jid = p->jid; 
+  np->jail = p->jail; 
   release(&np->lock);
 
   return pid;

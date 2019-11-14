@@ -494,10 +494,10 @@ sys_jailcfg(void)
 }
 
 uint64
-sys_setjid(void)
+sys_setjail(void)
 {
   int jid;
   if(argint(0, &jid) < 0) return -1;
-  setjid(jid);
+  setjail(jid);
   return 0;
 }
