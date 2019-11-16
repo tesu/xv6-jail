@@ -39,5 +39,24 @@ setjail(int jid)
 {
   struct proc *p = myproc();
   p->jail = jail+jid;
+  //p->cwd = idup(p->jail->rootdir);
+
 }
 
+void jailinit(void) // create root directory for each jail
+{
+  struct jail *j;
+  struct inode *ip;
+  int i = 0;
+  char path[9] = "/jdir/xx";
+  path[5] = '\0';
+  if ((ip = mkdir(path)) == 0) panic("jailinit: mkdir /jail");
+  path[8] = '\0';
+  for (j = jail; j < (jail + NJAIL); j++, i++) {
+    path[6] = '0' + i / 10;
+    path[7] = '0' + i % 10;
+    if ((ip = mkdir(path)) == 0) panic("jailinit: mkdir");
+    if (jail == j)
+    j->rootdir = ip;
+  }
+}
