@@ -133,6 +133,8 @@ UPROGS=\
 	$U/_jail\
 	$U/_rijail\
 	$U/_bad_malloc\
+	$U/_bad_dup\
+	$U/_bad_write\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
@@ -180,7 +182,7 @@ qemu-gdb: $K/kernel .gdbinit fs.img
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
-	printf.c umalloc.c bad_malloc.c\
+	printf.c umalloc.c bad_malloc.c bad_dup.c bad_write.c\
 	README dot-bochsrc *.pl \
 	.gdbinit.tmpl gdbutil\
 
