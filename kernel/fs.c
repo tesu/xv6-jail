@@ -640,6 +640,9 @@ skipelem(char *path, char *name)
   }
   while(*path == '/')
     path++;
+  // printf("name = ");
+  // printf(name);
+  // printf("\n");
   return path;
 }
 
@@ -652,10 +655,17 @@ namex(char *path, int nameiparent, char *name)
 {
   struct inode *ip, *next;
 
-  if(*path == '/')
-    ip = iget(ROOTDEV, ROOTINO);
-  else
+  //struct proc *p = myproc();
+
+  if(*path == '/'){
+    // if (p->jail){
+    //   ip = p->jail->rootdir;
+    // } else {
+      ip = iget(ROOTDEV, ROOTINO);
+    //}
+  } else {
     ip = idup(myproc()->cwd);
+  }
 
   while((path = skipelem(path, name)) != 0){
     ilock(ip);

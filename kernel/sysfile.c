@@ -347,19 +347,31 @@ sys_open(void)
   return fd;
 }
 
+
+struct inode* mkdir(char* path){
+  struct inode *ip; 
+  begin_op();
+  printf("here\n");
+  printf(path);
+  printf("\n");
+  if ((ip = create(path, T_DIR, 0, 0)) == 0) {
+    end_op();
+    return 0;
+  }
+  iunlockput(ip); 
+  end_op();
+  return ip; 
+}
+
 uint64
 sys_mkdir(void)
 {
   char path[MAXPATH];
-  struct inode *ip;
 
-  begin_op();
-  if(argstr(0, path, MAXPATH) < 0 || (ip = create(path, T_DIR, 0, 0)) == 0){
-    end_op();
+  if(argstr(0, path, MAXPATH) < 0) {
     return -1;
   }
-  iunlockput(ip);
-  end_op();
+  if (mkdir(path) == 0) return -1;
   return 0;
 }
 

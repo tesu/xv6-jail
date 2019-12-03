@@ -7,5 +7,6 @@ struct jail {
   uint64 diskusage;
   uint64 inodelim;  // not sure how to keep track of usage 
   uint64 inodeusage;
+  struct inode *rootdir;
 };
 
