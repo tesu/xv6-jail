@@ -7,14 +7,16 @@
 int
 main(int argc, char *argv[])
 {
-  if (argc < 3) {
-    printf("run_two expects 3 arguments\n");
+  if (argc < 5) {
+    fprintf(2, "Usage: jail jid1 exe1 jid2 exe2\n");
     exit(0);
   }
   if (fork() == 0) {
-    exec(argv[2], argv+2);
+    setjail(atoi(argv[3]));
+    exec(argv[4], argv+4);
   }
-  argv[2] = 0;
-  exec(argv[1], argv+1);
+  argv[3] = 0;
+  setjail(atoi(argv[1]));
+  exec(argv[2], argv+2);
   exit(0);
 }
