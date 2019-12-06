@@ -9,7 +9,8 @@ main(int argc, char *argv[])
 {
   printf("pid: %d\n", getpid());
   while (1) {
-    printf(".");
+    if (argc > 1) printf("%c", argv[1][0]);
+    else printf(".");
     sleep(10);
   }
   exit(0);
