@@ -136,6 +136,10 @@ freeproc(struct proc *p)
   p->tf = 0;
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
+  if (p->jail != 0){
+    p->jail->memusage -= p->sz;
+    p->jail = 0;
+  }
   p->pagetable = 0;
   p->sz = 0;
   p->pid = 0;
