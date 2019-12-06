@@ -34,13 +34,16 @@ lsjails(void)
   }
 }
 
-void
+int
 setjail(int jid)
 {
   struct proc *p = myproc();
-  p->jail = jail+jid;
-  //p->cwd = idup(p->jail->rootdir);
+  if (p->jail != 0) { // proc is in jail
+    return -1;  // setjail fail
+  }
 
+  p->jail = jail+jid;
+  return 0;
 }
 
 void jailinit(void) // create root directory for each jail

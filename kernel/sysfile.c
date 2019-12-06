@@ -510,6 +510,9 @@ sys_setjail(void)
 {
   int jid;
   if(argint(0, &jid) < 0) return -1;
-  setjail(jid);
+  if (setjail(jid) < 0) {
+    printf("setjail failed.\n");
+    return -1;
+  }
   return 0;
 }
