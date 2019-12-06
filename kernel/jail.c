@@ -38,7 +38,7 @@ void
 setjail(int jid)
 {
   struct proc *p = myproc();
-  p->jail = jail+jid;
+  if (!p->jail) p->jail = jail+jid;
   //p->cwd = idup(p->jail->rootdir);
 
 }
