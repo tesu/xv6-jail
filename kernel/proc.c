@@ -291,6 +291,7 @@ fork(void)
     if(p->jail->memusage > p->jail->memlim || p->jail->numproc + 1 > p->jail->maxproc){
       p->jail->memusage -= p->sz;
       release(&p->jail->lock);
+      release(&np->lock);
       return -1;
     }
     release(&p->jail->lock);
