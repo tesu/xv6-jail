@@ -201,14 +201,14 @@ ialloc(uint dev, short type)
   struct buf *bp;
   struct dinode *dip;
 
-  if(myproc()->jail){
-    acquire(&myproc()->jail->lock);
-    if(myproc()->jail->inodeusage >= myproc()->jail->inodelim){
-      release(&myproc()->jail->lock);
-      // TODO: make sure that ialloc can return null on failure? previously only panicked
-      return 0;
-    }
-  }
+  // if(myproc()->jail){
+  //   acquire(&myproc()->jail->lock);
+  //   if(myproc()->jail->inodeusage >= myproc()->jail->inodelim){
+  //     release(&myproc()->jail->lock);
+  //     // TODO: make sure that ialloc can return null on failure? previously only panicked
+  //     return 0;
+  //   }
+  // }
 
   for(inum = 1; inum < sb.ninodes; inum++){
     bp = bread(dev, IBLOCK(inum, sb));
@@ -218,12 +218,6 @@ ialloc(uint dev, short type)
       dip->type = type;
       log_write(bp);   // mark it allocated on the disk
       brelse(bp);
-
-      if(myproc()->jail){
-        myproc()->jail->inodeusage++;
-        release(&myproc()->jail->lock);
-      }
-
       return iget(dev, inum);
     }
     brelse(bp);
@@ -371,11 +365,6 @@ iput(struct inode *ip)
   }
 
   ip->ref--;
-  if(myproc()->jail) {
-    acquire(&myproc()->jail->lock);
-    myproc()->jail->inodeusage--;
-    release(&myproc()->jail->lock);
-  }
   release(&icache.lock);
 }
 
