@@ -6,6 +6,7 @@
 #include "proc.h"
 #include "defs.h"
 #include "elf.h"
+#include "jail.h"
 
 static int loadseg(pde_t *pgdir, uint64 addr, struct inode *ip, uint offset, uint sz);
 
@@ -112,6 +113,12 @@ exec(char *path, char **argv)
   p->tf->epc = elf.entry;  // initial program counter = main
   p->tf->sp = sp; // initial stack pointer
   proc_freepagetable(oldpagetable, oldsz);
+  if (p->jail != 0) {
+    acquire(&p->jail->lock);
+    p->jail->memusage -= oldsz;
+    p->jail->memusage += p->sz;
+    release(&p->jail->lock);
+  }
   return argc; // this ends up in a0, the first argument to main(argc, argv)
 
  bad:
