@@ -140,7 +140,7 @@ int             fetchaddr(uint64, uint64*);
 void            syscall();
 
 // sysfile.c
-struct inode*   mkdir(char* path);
+struct inode*   mkdir(char* path, int isjail);
 
 // trap.c
 extern uint     ticks;

@@ -238,6 +238,7 @@ bad:
   return -1;
 }
 
+// since minor and major are only originally used for T_DEVICE, we repurpose minor for T_DIR to signify a jail directory
 static struct inode*
 create(char *path, short type, short major, short minor)
 {
@@ -263,16 +264,20 @@ create(char *path, short type, short major, short minor)
 
   ilock(ip);
   ip->major = major;
-  ip->minor = minor;
+  ip->minor = (type == T_DIR) ? 0 : minor;
   ip->nlink = 1;
   iupdate(ip);
 
   if(type == T_DIR){  // Create . and .. entries.
-    dp->nlink++;  // for ".."
+    if (minor == 0) dp->nlink++;  // for ".." (does not exist when minor == 0)
     iupdate(dp);
     // No ip->nlink++ for ".": avoid cyclic ref count.
-    if(dirlink(ip, ".", ip->inum) < 0 || dirlink(ip, "..", dp->inum) < 0)
-      panic("create dots");
+    if (minor == 0) {
+      if(dirlink(ip, ".", ip->inum) < 0 || dirlink(ip, "..", dp->inum) < 0)
+        panic("create dots");
+    } else {
+      if(dirlink(ip, ".", ip->inum) < 0) panic("create dot");
+    }
   }
 
   if(dirlink(dp, name, ip->inum) < 0)
@@ -348,11 +353,11 @@ sys_open(void)
 }
 
 
-struct inode* mkdir(char* path){
+struct inode* mkdir(char* path, int isjail){
   struct inode *ip; 
   begin_op();
   printf("mkdir %s\n", path);
-  if ((ip = create(path, T_DIR, 0, 0)) == 0) {
+  if ((ip = create(path, T_DIR, 0, isjail)) == 0) {
     end_op();
     return 0;
   }
@@ -369,7 +374,7 @@ sys_mkdir(void)
   if(argstr(0, path, MAXPATH) < 0) {
     return -1;
   }
-  if (mkdir(path) == 0) return -1;
+  if (mkdir(path, 0) == 0) return -1;
   return 0;
 }
 
