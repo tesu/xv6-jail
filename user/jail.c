@@ -2,8 +2,8 @@
 #include "kernel/stat.h"
 #include "user/user.h"
 
-#define DEFAULT_MLIMIT 64000
-#define DEFAULT_DLIMIT 64000
+#define DEFAULT_MLIMIT 6400000
+#define DEFAULT_DLIMIT 6400000
 #define DEFAULT_ILIMIT 100
 
 // the jail configuration program
