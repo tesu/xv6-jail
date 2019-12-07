@@ -52,7 +52,7 @@ setjail(int jid)
   if (jail[jid].rootdir[0] == 0) mkdir(rootdir, 1);
 
   acquire(&jail[jid].lock);
-  if (jail[jid].memusage + p->sz > jail[jid].memlim) {
+  if (jail[jid].memusage + p->sz > jail[jid].memlim || jail[jid].numproc + 1 > jail[jid].maxproc) {
     release(&jail[jid].lock);
     return -1;
   }

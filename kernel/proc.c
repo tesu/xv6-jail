@@ -292,7 +292,7 @@ fork(void)
   if(p->jail){
     acquire(&p->jail->lock);
     p->jail->memusage += p->sz;
-    if(p->jail->memusage > p->jail->memlim){
+    if(p->jail->memusage > p->jail->memlim || p->jail->numproc + 1 > p->jail->maxproc){
       p->jail->memusage -= p->sz;
       release(&p->jail->lock);
       return -1;
@@ -322,7 +322,6 @@ fork(void)
       np->ofile[i] = filedup(p->ofile[i]);
   np->cwd = idup(p->cwd);
   np->jailcwd = p->jailcwd;
-
   safestrcpy(np->name, p->name, sizeof(p->name));
 
   pid = np->pid;
@@ -330,7 +329,9 @@ fork(void)
   np->state = RUNNABLE;
   np->jail = p->jail;
   if (np->jail != 0){ 
+    acquire(&p->jail->lock);
     np->jail->numproc++;
+    release(&p->jail->lock);
   }
   release(&np->lock);
 
