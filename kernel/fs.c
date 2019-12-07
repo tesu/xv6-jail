@@ -650,7 +650,7 @@ namex(char *path, int nameiparent, char *name)
       ip = iget(ROOTDEV, ROOTINO);
       if (p != 0 && p->jail){
         ilock(ip);
-        if((next = dirlookup(ip, p->jail->rootdir, 0)) == 0){
+        if((next = dirlookup(ip, p->jail->rootdir + 1, 0)) == 0){
           iunlockput(ip);
           return 0;
         }
