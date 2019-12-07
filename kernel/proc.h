@@ -104,4 +104,5 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   struct jail* jail;           // Jail struct (or 0 if not running in jail)
+  int jailcwd;                 // Bool for if cwd has been changed to be inside jail
 };

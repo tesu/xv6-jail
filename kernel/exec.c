@@ -119,6 +119,20 @@ exec(char *path, char **argv)
     p->jail->memusage += p->sz;
     release(&p->jail->lock);
   }
+
+  // UPDATE CWD IF NOT UPDATED YET
+  if (p->jail != 0 && p->jailcwd == 0) {
+    begin_op();
+    iput(p->cwd);
+    struct inode * ip2 = namei(p->jail->rootdir + 1);
+    p->cwd = ip2;
+    end_op();
+    if (p->cwd == 0) {
+      return -1;
+    }
+    p->jailcwd = 1;
+  }
+
   return argc; // this ends up in a0, the first argument to main(argc, argv)
 
  bad:

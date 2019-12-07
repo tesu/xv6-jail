@@ -228,6 +228,7 @@ userinit(void)
 
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
+  p->jailcwd = 0;
 
   p->state = RUNNABLE;
 
@@ -320,6 +321,7 @@ fork(void)
     if(p->ofile[i])
       np->ofile[i] = filedup(p->ofile[i]);
   np->cwd = idup(p->cwd);
+  np->jailcwd = p->jailcwd;
 
   safestrcpy(np->name, p->name, sizeof(p->name));
 
@@ -385,6 +387,7 @@ exit(int status)
   iput(p->cwd);
   end_op();
   p->cwd = 0;
+  p->jailcwd = 0;
 
   // we might re-parent a child to init. we can't be precise about
   // waking up init, since we can't acquire its lock once we've

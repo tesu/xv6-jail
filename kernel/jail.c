@@ -49,18 +49,11 @@ setjail(int jid)
   char rootdir[8] = "/jailXX";
   rootdir[5] = '0' + ((jid / 10) % 10);
   rootdir[6] = '0' + (jid % 10);
-
   if (jail[jid].rootdir[0] == 0) mkdir(rootdir, 1);
-  begin_op();
-  struct inode * cwd = namei(rootdir);
-  end_op();
 
   acquire(&jail[jid].lock);
   if (jail[jid].memusage + p->sz > jail[jid].memlim) {
     release(&jail[jid].lock);
-    begin_op();
-    iput(cwd);
-    end_op();
     return -1;
   }
   p->jail = jail+jid;
@@ -71,12 +64,6 @@ setjail(int jid)
     safestrcpy(p->jail->rootdir, rootdir, 8);
     printf("set rootdir %s\n", p->jail->rootdir);
   }
-
-  begin_op();
-  iput(p->cwd);
-  end_op();
-
-  p->cwd = cwd;
 
   release(&jail[jid].lock);
   printf("successfully exited\n");
