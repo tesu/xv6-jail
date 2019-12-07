@@ -62,11 +62,9 @@ setjail(int jid)
 
   if (p->jail->rootdir[0] == 0) {
     safestrcpy(p->jail->rootdir, rootdir, 8);
-    printf("set rootdir %s\n", p->jail->rootdir);
   }
 
   release(&jail[jid].lock);
-  printf("successfully exited\n");
   return 0;
 }
 

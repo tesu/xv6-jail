@@ -124,11 +124,10 @@ exec(char *path, char **argv)
   if (p->jail != 0 && p->jailcwd == 0) {
     begin_op();
     iput(p->cwd);
-    struct inode * ip2 = namei(p->jail->rootdir + 1);
-    p->cwd = ip2;
+    p->cwd = namei(p->jail->rootdir + 1);
     end_op();
     if (p->cwd == 0) {
-      return -1;
+      goto bad;
     }
     p->jailcwd = 1;
   }
