@@ -45,6 +45,15 @@ setjail(int jid)
   if (p->jail != 0) { // proc is in jail
     return -1; 
   }
+
+  struct inode* ip = 0;
+  if (jail[jid].rootdir == 0) {
+    char rootdir[8] = "/jailXX";
+    rootdir[5] = '0' + ((jid / 10) % 10);
+    rootdir[6] = '0' + (jid % 10);
+    ip = mkdir(rootdir);
+  }
+
   acquire(&jail[jid].lock);
   if (jail[jid].memusage + p->sz > jail[jid].memlim) {
     release(&jail[jid].lock);
@@ -53,6 +62,12 @@ setjail(int jid)
   p->jail = jail+jid;
   p->jail->memusage += p->sz;
   p->jail->numproc++;
+
+  if (p->jail->rootdir == 0) {
+    p->jail->rootdir = ip;
+    printf("p %p\n", p->jail->rootdir);
+  }
+
   release(&jail[jid].lock);
   return 0;
 }
