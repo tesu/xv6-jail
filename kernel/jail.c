@@ -11,6 +11,9 @@ struct jail jail[NJAIL];
 
 int
 jailcfg(int jid, uint64 memlim, uint64 disklim, uint64 inodelim) {
+  if (myproc()->jail != 0) { // proc is in jail
+    return -1; 
+  }
   // TODO: add bounds checking...
   if (0) { // if bounds check failed
     return -1;
@@ -19,6 +22,7 @@ jailcfg(int jid, uint64 memlim, uint64 disklim, uint64 inodelim) {
   j->memlim = memlim;
   j->disklim = disklim;
   j->inodelim = inodelim; 
+  j->maxproc = 100; // TODO
   return 0;
 }
 
@@ -30,17 +34,23 @@ lsjails(void)
   int i = 0;
   printf("\nlsjails:\n");
   for(j = jail; j < &jail[NJAIL]; j++, i++){
-    printf("jail %d:\nmemory\t: %p/%p\ndisk\t: %p/%p\ninodes\t: %p/%p\n", i, j->memusage, j->memlim, j->diskusage, j->disklim, j->inodeusage, j->inodelim);
+    printf("jail %d:\nmemory\t: %p/%p\ndisk\t: %p/%p\ninodes\t: %p/%p\nnumprocs: %d/%d\n", 
+          i, j->memusage, j->memlim, j->diskusage, j->disklim, j->inodeusage, j->inodelim, j->numproc, j->maxproc);
   }
 }
 
-void
+int
 setjail(int jid)
 {
   struct proc *p = myproc();
-  if (!p->jail) p->jail = jail+jid;
-  //p->cwd = idup(p->jail->rootdir);
-
+  if (p->jail != 0) { // proc is in jail
+    return -1; 
+  }
+  p->jail = jail+jid;
+  acquire(&p->jail->lock);
+  p->jail->numproc++;
+  release(&p->jail->lock);
+  return 0;
 }
 
 void jailinit(void) // create root directory for each jail

@@ -131,11 +131,24 @@ found:
 static void
 freeproc(struct proc *p)
 {
+  printf("freeing proc %d, ", p->pid);
   if(p->tf)
     kfree((void*)p->tf);
   p->tf = 0;
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
+
+  if (p->jail != 0){
+    printf("in jail %p.\n", p->jail);
+    acquire(&p->jail->lock);
+    p->jail->memusage -= p->sz;
+    p->jail->numproc--;
+    release(&p->jail->lock);
+    p->jail = 0;
+  } else {
+    printf("not in jail.\n");
+  }
+
   p->pagetable = 0;
   p->sz = 0;
   p->pid = 0;
@@ -144,6 +157,7 @@ freeproc(struct proc *p)
   p->chan = 0;
   p->killed = 0;
   p->xstate = 0;
+  p->jail = 0;
   p->state = UNUSED;
 }
 
@@ -312,7 +326,10 @@ fork(void)
   pid = np->pid;
 
   np->state = RUNNABLE;
-  np->jail = p->jail; 
+  np->jail = p->jail;
+  if (np->jail != 0){ 
+    np->jail->numproc++;
+  }
   release(&np->lock);
 
   return pid;

@@ -11,7 +11,10 @@ main(int argc, char *argv[])
     fprintf(2, "Usage: jail jid [executable args]\n");
     exit(0);
   }
-  setjail(atoi(argv[1]));
+  if (setjail(atoi(argv[1])) < 0) {
+    printf("rijail failed.\n");
+    exit(-1);
+  }
 
   char *new_argv[MAXARG];
   for (int i = 0; i < argc - 2; i++) {

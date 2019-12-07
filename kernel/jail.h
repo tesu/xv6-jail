@@ -8,5 +8,7 @@ struct jail {
   uint64 inodelim;  // not sure how to keep track of usage 
   uint64 inodeusage;
   struct inode *rootdir;
+  uint64 numproc;
+  uint64 maxproc; 
 };
 
