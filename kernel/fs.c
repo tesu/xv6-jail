@@ -644,14 +644,19 @@ namex(char *path, int nameiparent, char *name)
 {
   struct inode *ip, *next;
 
-  //struct proc *p = myproc();
+  struct proc *p = myproc();
 
   if(*path == '/'){
-    // if (p->jail){
-    //   ip = p->jail->rootdir;
-    // } else {
       ip = iget(ROOTDEV, ROOTINO);
-    //}
+      if (p != 0 && p->jail){
+        ilock(ip);
+        if((next = dirlookup(ip, p->jail->rootdir, 0)) == 0){
+          iunlockput(ip);
+          return 0;
+        }
+        iunlockput(ip);
+        ip = next;
+      }
   } else {
     ip = idup(myproc()->cwd);
   }

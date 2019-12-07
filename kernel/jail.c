@@ -46,12 +46,11 @@ setjail(int jid)
     return -1; 
   }
 
-  struct inode* ip = 0;
-  if (jail[jid].rootdir == 0) {
-    char rootdir[8] = "/jailXX";
+  char rootdir[8] = "/jailXX";
+  if (jail[jid].rootdir[0] == 0) {
     rootdir[5] = '0' + ((jid / 10) % 10);
     rootdir[6] = '0' + (jid % 10);
-    ip = mkdir(rootdir);
+    mkdir(rootdir);
   }
 
   acquire(&jail[jid].lock);
@@ -63,9 +62,10 @@ setjail(int jid)
   p->jail->memusage += p->sz;
   p->jail->numproc++;
 
-  if (p->jail->rootdir == 0) {
-    p->jail->rootdir = ip;
-    printf("p %p\n", p->jail->rootdir);
+  if (p->jail->rootdir[0] == 0) {
+    safestrcpy(p->jail->rootdir, rootdir, 8);
+    // p->jail->rootdir = ip;
+    printf("p %s\n", p->jail->rootdir);
   }
 
   release(&jail[jid].lock);
@@ -85,7 +85,7 @@ void jailinit(void) // create root directory for each jail
     path[6] = '0' + i / 10;
     path[7] = '0' + i % 10;
     if ((ip = mkdir(path)) == 0) panic("jailinit: mkdir");
-    if (jail == j)
-    j->rootdir = ip;
+    if (jail == j) {} 
+    // j->rootdir = ip;
   }
 }
