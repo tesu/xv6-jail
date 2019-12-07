@@ -70,20 +70,3 @@ setjail(int jid)
   return 0;
 }
 
-void jailinit(void) // create root directory for each jail
-{
-  struct jail *j;
-  struct inode *ip;
-  int i = 0;
-  char path[9] = "/jdir/xx";
-  path[5] = '\0';
-  if ((ip = mkdir(path, 1)) == 0) panic("jailinit: mkdir /jail");
-  path[8] = '\0';
-  for (j = jail; j < (jail + NJAIL); j++, i++) {
-    path[6] = '0' + i / 10;
-    path[7] = '0' + i % 10;
-    if ((ip = mkdir(path, 1)) == 0) panic("jailinit: mkdir");
-    if (jail == j) {} 
-    // j->rootdir = ip;
-  }
-}

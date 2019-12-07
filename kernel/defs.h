@@ -190,7 +190,6 @@ void            virtio_disk_intr();
 int             jailcfg(int, uint64, uint64, uint64);
 void            lsjails(void);  // for debugging
 int             setjail(int);
-void            jailinit(void); // create jail root dirs, and maybe others
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
