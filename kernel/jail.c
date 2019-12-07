@@ -46,10 +46,15 @@ setjail(int jid)
   if (p->jail != 0) { // proc is in jail
     return -1; 
   }
+  acquire(&jail[jid].lock);
+  if (jail[jid].memusage + p->sz > jail[jid].memlim) {
+    release(&jail[jid].lock);
+    return -1;
+  }
   p->jail = jail+jid;
-  acquire(&p->jail->lock);
+  p->jail->memusage += p->sz;
   p->jail->numproc++;
-  release(&p->jail->lock);
+  release(&jail[jid].lock);
   return 0;
 }
 
