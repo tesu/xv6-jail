@@ -276,7 +276,8 @@ create(char *path, short type, short major, short minor)
       if(dirlink(ip, ".", ip->inum) < 0 || dirlink(ip, "..", dp->inum) < 0)
         panic("create dots");
     } else {
-      if(dirlink(ip, ".", ip->inum) < 0) panic("create dot");
+      if(dirlink(ip, ".", ip->inum) < 0 || dirlink(ip, "..", ip->inum) < 0) // .. points to self just like root directory
+        panic("create dots");
     }
   }
 
