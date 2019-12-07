@@ -12,11 +12,17 @@ main(int argc, char *argv[])
     exit(0);
   }
   if (fork() == 0) {
-    setjail(atoi(argv[3]));
+    if (setjail(atoi(argv[3])) < 0) {
+      printf("run_two failed.\n");
+      exit(-1);
+    }
     exec(argv[4], argv+4);
   }
   argv[3] = 0;
-  setjail(atoi(argv[1]));
+  if (setjail(atoi(argv[1])) < 0){
+    printf("run_two failed.\n");
+    exit(-1);
+  }
   exec(argv[2], argv+2);
   exit(0);
 }
