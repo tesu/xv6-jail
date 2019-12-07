@@ -201,15 +201,6 @@ ialloc(uint dev, short type)
   struct buf *bp;
   struct dinode *dip;
 
-  // if(myproc()->jail){
-  //   acquire(&myproc()->jail->lock);
-  //   if(myproc()->jail->inodeusage >= myproc()->jail->inodelim){
-  //     release(&myproc()->jail->lock);
-  //     // TODO: make sure that ialloc can return null on failure? previously only panicked
-  //     return 0;
-  //   }
-  // }
-
   for(inum = 1; inum < sb.ninodes; inum++){
     bp = bread(dev, IBLOCK(inum, sb));
     dip = (struct dinode*)bp->data + inum%IPB;
@@ -629,9 +620,6 @@ skipelem(char *path, char *name)
   }
   while(*path == '/')
     path++;
-  // printf("name = ");
-  // printf(name);
-  // printf("\n");
   return path;
 }
 
