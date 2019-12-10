@@ -33,7 +33,7 @@ lsjails(void)
   int i = 0;
   printf("\nlsjails:\n");
   for(j = jail; j < &jail[NJAIL]; j++, i++){
-    printf("jail %d:\nmemory\t: %p/%p\ndisk\t: %p/%p\nnumprocs: %d/%d\n", 
+    printf("jail %d:\nmemory\t: %d/%d\ndisk\t: %d/%d\nnumprocs: %d/%d\n", 
           i, j->memusage, j->memlim, j->diskusage, j->disklim, j->numproc, j->maxproc);
   }
 }

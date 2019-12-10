@@ -138,6 +138,7 @@ UPROGS=\
 	$U/_bad_fork\
 	$U/_run_two\
 	$U/_busy_print\
+	$U/_demojail\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

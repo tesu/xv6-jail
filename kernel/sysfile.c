@@ -357,7 +357,7 @@ sys_open(void)
 struct inode* mkdir(char* path, int isjail){
   struct inode *ip; 
   begin_op();
-  printf("mkdir %s\n", path);
+  // printf("mkdir %s\n", path);
   if ((ip = create(path, T_DIR, 0, isjail)) == 0) {
     end_op();
     return 0;
